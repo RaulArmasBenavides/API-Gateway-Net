@@ -1,0 +1,23 @@
+{
+  "SwaggerEndPoints": [
+    //Por cada API con swagger, se debe agregar la ruta del json asociado.
+    //El tag "Key" es el identificador, cada archivo de configuración del Ocelot.api debe tener la misma "SwaggerKey"
+    {
+      "Key": "api-impulso",
+      "TransformByOcelotConfig": true,
+      //true: solo muestra servicios expuestos por el gateway
+      //false: muestra todos los servicios expuestos en el API origen
+      //"TakeServersFromDownstreamService": false,
+      "Config": [
+        {
+          "Name": "API-impulso",
+          "Version": "v1",
+          "Url": "https://localhost:44340/swagger/index.html"
+        }
+      ]
+    },
+   
+    
+
+  ]
+}

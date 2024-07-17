@@ -1,0 +1,6 @@
+{
+  //Ruta de salida el Api Gateway
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7090"
+  }
+}
