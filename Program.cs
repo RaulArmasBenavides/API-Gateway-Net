@@ -9,17 +9,24 @@ using System.Text;
 
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Ocelot.Provider.Consul;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configurar Ocelot para cargar rutas desde un archivo JSON
-builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("ocelot.SwaggerEndPoints.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
-builder.Services.AddOcelot();
-
+builder.Services
+    .AddOcelot()
+    .AddConsul();
+builder.Services.AddSwaggerForOcelot(builder.Configuration);
 var app = builder.Build();
-
-app.UseOcelot().Wait();
+app.UseSwaggerForOcelotUI(opt => { opt.PathToSwaggerGenerator = "/swagger/docs"; }); // opcional
+await app.UseOcelot();
 
 app.Run();

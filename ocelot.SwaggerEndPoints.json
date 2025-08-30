@@ -1,0 +1,14 @@
+{
+  "SwaggerEndPoints": [
+    {
+      "Key": "apis",
+      "Config": [
+        {
+          "Name": "Products v1",
+          "Version": "v1",
+          "Url": "https://localhost:7090/products/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
+}
