@@ -16,9 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Configurar Ocelot para cargar rutas desde un archivo JSON
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
-    .AddJsonFile("ocelot.SwaggerEndPoints.json", optional: true, reloadOnChange: true)
+    .AddJsonFile("swagger.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
 builder.Services
@@ -26,7 +25,13 @@ builder.Services
     .AddConsul();
 builder.Services.AddSwaggerForOcelot(builder.Configuration);
 var app = builder.Build();
-app.UseSwaggerForOcelotUI(opt => { opt.PathToSwaggerGenerator = "/swagger/docs"; }); // opcional
+app.UseSwaggerForOcelotUI(opt =>
+{
+    opt.PathToSwaggerGenerator = "/swagger/docs";
+});
 await app.UseOcelot();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();

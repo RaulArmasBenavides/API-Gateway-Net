@@ -1,7 +1,7 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/categories",
+      "DownstreamPathTemplate": "/api/v1/Categories",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {

@@ -1,39 +1,7 @@
 {
   "Routes": [
     {
-      "UpstreamPathTemplate": "/products/swagger/{everything}",
-      "UpstreamHttpMethod": [ "GET" ],
       "DownstreamPathTemplate": "/swagger/{everything}",
-      "DownstreamScheme": "https",
-      "ServiceName": "products.api",
-      "UseServiceDiscovery": true,
-      "HttpHandlerOptions": { "DangerousAcceptAnyServerCertificateValidator": true },
-      "Priority": 50,
-      "SwaggerKey": "apis"
-    },
-    {
-      "UpstreamPathTemplate": "/products/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS" ],
-      "DownstreamPathTemplate": "/api/products/{everything}",
-      "DownstreamScheme": "https",
-      "ServiceName": "products.api",
-      "UseServiceDiscovery": true,
-      "LoadBalancerOptions": { "Type": "RoundRobin" },
-      "RetryPolicy": {
-        "RetryCount": 3,
-        "RetryBackOff": 200
-      },
-      "HttpHandlerOptions": {
-        "AllowAutoRedirect": false,
-        "UseCookieContainer": false,
-        "DangerousAcceptAnyServerCertificateValidator": true
-      },
-      "Priority": 10
-    },
-    {
-      "UpstreamPathTemplate": "/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS" ],
-      "DownstreamPathTemplate": "/api/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -41,26 +9,37 @@
           "Port": 44340
         }
       ],
-      "LoadBalancerOptions": { "Type": "RoundRobin" },
-      "RetryPolicy": {
-        "RetryCount": 3,
-        "RetryBackOff": 1000
-      },
-      "HttpHandlerOptions": {
-        "AllowAutoRedirect": false,
-        "UseCookieContainer": false,
-        "DangerousAcceptAnyServerCertificateValidator": true
-      },
-      "Priority": 0
+      "UpstreamPathTemplate": "/movies/swagger/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "movies"
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44340
+        }
+      ],
+      "UpstreamPathTemplate": "/movies/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS" ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 5,
+        "ClientWhitelist": []
+      }
     }
   ],
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:7090",
-    "ServiceDiscoveryProvider": {
-      "Type": "Consul",
-      "Host": "localhost",
-      "Port": 8500,
-      "PollingInterval": 10000
+    "RateLimitOptions": {
+      "ClientIdHeader": "ClientId",
+      "QuotaExceededMessage": "Too many requests. Please try again later.",
+      "HttpStatusCode": 429,
+      "DisableRateLimitHeaders": false
     }
   }
 }
