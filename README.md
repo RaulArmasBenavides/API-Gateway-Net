@@ -18,3 +18,39 @@ If you want to learn more about creating good readme files then refer the follow
 - [ASP.NET Core](https://github.com/aspnet/Home)
 - [Visual Studio Code](https://github.com/Microsoft/vscode)
 - [Chakra Core](https://github.com/Microsoft/ChakraCore)
+
+
+
+ Resumen: ¿Blacklist sí o no?
+
+  ┌─────────────────┬──────────────────────────────────────────────────┐
+  │     Aspecto     │                  Recomendación                   │
+  ├─────────────────┼──────────────────────────────────────────────────┤
+  │ ¿Implementarlo? │ ✅ Sí, es útil para seguridad                    │
+  ├─────────────────┼──────────────────────────────────────────────────┤
+  │ ¿Hazlo bien?    │ ✅ Con persistencia y caché                      │
+  ├─────────────────┼──────────────────────────────────────────────────┤
+  │ ¿Dónde?         │ En el gateway (Ocelot) es el lugar ideal         │
+  ├─────────────────┼──────────────────────────────────────────────────┤
+  │ ¿Alternativas?  │ WAF externo (ModSecurity), Azure WAF, Cloudflare │
+  └─────────────────┴──────────────────────────────────────────────────┘
+
+  Lo que acabo de crear es:
+  - ✅ Bloquea IPs configurables
+  - ✅ Bloquea clientes por X-ClientId
+  - ✅ Cargable desde appsettings.json
+  - ✅ Fácil de actualizar en runtime
+  Para producción, considera:
+  1. Persistir en Redis o DB (en lugar de HashSet en memoria)
+  2. Agregar logging de intentos bloqueados
+  3. Implementar white-list también (whitelist + blacklist)
+  4. Auto-bloqueo por comportamiento sospechoso (múltiples 401s, etc.)
+
+
+
+
+
+
+
+    # A través del gateway:
+  curl https://localhost:7090/movies/Categories

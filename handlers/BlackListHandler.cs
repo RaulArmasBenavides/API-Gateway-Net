@@ -1,22 +1,42 @@
-﻿using System.Net;
+using System.Net;
 
-namespace Gateway.Api.handlers
+namespace Gateway.Api.Handlers;
+
+public class BlacklistHandler : DelegatingHandler
 {
-    public class BlackListHandler : DelegatingHandler
+    private readonly IConfiguration _config;
+    private static HashSet<string> _blacklistedIps = new();
+    private static HashSet<string> _blacklistedClients = new();
+
+    public BlacklistHandler(IConfiguration config)
     {
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        _config = config;
+        LoadBlacklist();
+    }
+
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        var clientIp = request.Content?.Headers.ContentLength?.ToString() ?? "unknown";
+        var clientId = request.Headers.FirstOrDefault(h => h.Key == "X-ClientId").Value?.FirstOrDefault();
+
+        if (_blacklistedIps.Contains(clientIp) || _blacklistedClients.Contains(clientId ?? ""))
         {
-            var myHeader = request.Headers.FirstOrDefault(c => c.Key == "Header");
-
-            if (myHeader.Value != null && myHeader.Value.Any())
+            return new HttpResponseMessage(HttpStatusCode.Forbidden)
             {
-                return await base.SendAsync(request, cancellationToken);
-            }
-
-            var response = new HttpResponseMessage(HttpStatusCode.BadGateway);
-            response.ReasonPhrase = "Your header is not valid";
-            return await Task.FromResult<HttpResponseMessage>(response);
-
+                Content = new StringContent("Acceso denegado: Cliente en lista negra")
+            };
         }
+
+        return await base.SendAsync(request, cancellationToken);
+    }
+
+    private void LoadBlacklist()
+    {
+        var config = _config.GetSection("Blacklist");
+        var ips = config.GetSection("IPs").Get<List<string>>() ?? new();
+        var clients = config.GetSection("Clients").Get<List<string>>() ?? new();
+
+        _blacklistedIps = new HashSet<string>(ips);
+        _blacklistedClients = new HashSet<string>(clients);
     }
 }

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Write-Host \"Archivos eliminados\")"
+    ]
+  }
+}
